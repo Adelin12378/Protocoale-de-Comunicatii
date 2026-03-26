@@ -14,30 +14,68 @@
 #include "Arduino.h"
 #include "avr8-stub.h"
 #include "app_api.h" // only needed with flash breakpoints
+#include "laboratory_types.h"
+
 
 void setup() {
     // initialize GDB stub
     debug_init();
 
-    // TODO: 1. configure pin directions and turn off leds
+    DDRD &= ~(1 << 2);  // PD2 is Input (Button)
+    DDRD |= (1 << 3);  // PD3 is Output (LED0)
+    DDRD |= (1 << 4);  // PD4 is Output (LED1)
+
+    PORTD &= ~(1 << 3);
+    PORTD &= ~(1 << 4);
 }
 
 void inline setLed0State(LedState state) {
     // TODO: 1. turn led0 on or off based on state
+    // PIN2 -> PD2
+    if (state == LedState::ON) {
+        PORTD |= (1 << 3); // aprins
+    } else {
+        PORTD &= ~(1 << 3); // stins
+    }
 }
+
+int buttonState = 0;
+unsigned char btn = PIND & (1 << 2);
 
 // read button state
 ButtonState inline readBtnState() {
     // TODO: 1. return if button is pressed
-    return ButtonState::NOT_PRESSED; 
+    btn = PIND & (1 << 2);
+    if (btn != 0) { // buton apasat
+        return ButtonState::PRESSED; 
+    } else {   
+        return ButtonState::NOT_PRESSED;
+    } 
 }
 
 void inline setLed1State(LedState state) {
     // TODO: 2. turn led1 on or off based on state
+    // PIN2 -> PD2
+    if (state == LedState::ON) {
+        PORTD |= (1 << 4); // aprins
+    } else {
+        PORTD &= ~(1 << 4); // stins
+    }
 }
 
 static void oscillatingLed() {
     // TODO: 2. toggle the led1 with the pattern: 500ms on, 200ms off
+        static int cnt = 0;
+        cnt++;
+        if (cnt ==5) {
+            setLed1State(LedState::ON);
+        }
+        if(cnt ==7) {
+            setLed1State(LedState::OFF);
+        }
+        if(cnt == 7) {
+            cnt = 0;
+        }
     // TODO: 3. analyze on oscliisop the  led1 signal and measure the timing
 }
 
