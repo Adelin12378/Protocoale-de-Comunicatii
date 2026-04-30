@@ -34,13 +34,13 @@ public:
     /// @param d Data byte to be send
     /// @param expectedResponse The expected response
     /// @return True if response is equal with expected response
-    bool writeByte(const char& d, I2cResponse expectedResponse = ACKNOWLEDGE);
+    bool writeByte(const char& d);
 
     /// @brief Read one byte from I2C, after addressing stage
     /// @param d The response will be in this variable
     /// @param expectedResponse The expected response
     /// @return True if response is equal with expected response
-    bool readByte(char& d, I2cResponse expectedResponse = ACKNOWLEDGE);
+    bool readByte(char& d);
 
     /// @brief Send stop condition for I2C
     void sendStop();

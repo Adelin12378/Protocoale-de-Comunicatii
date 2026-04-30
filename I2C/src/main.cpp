@@ -14,19 +14,33 @@
 #include "avr8-stub.h"
 #include "app_api.h" // only needed with flash breakpoints
 #include <I2cMaster.h>
+#include <Uart.h>
 
 #define ADX345_I2C_ADDR 0x53
 
 I2cMaster wire;
+Uart uart;
+char id;
 
 void setup() {
     // initialize GDB stub
-    debug_init();
 
+    uart.init();
     wire.init();
+
 
     delay(500);
     // TODO: 2. read ADXL DEVICE ID
+    wire.sendStart();
+    wire.writeAddrWrite(0x53);
+    wire.writeByte(0x00);
+    wire.sendStart();
+    wire.writeAddrRead(0x53);
+    char id;
+    wire.readByte(id);
+    uart.writeIntegerNumber(id, 16);
+    wire.sendStop();
+    
     // expected response 0xE5
 
     delay(500);
@@ -42,5 +56,6 @@ void ADXL_readData() {
 
 void loop() {
     ADXL_readData();
+    wire.sendStart();
     delay(500);
 }

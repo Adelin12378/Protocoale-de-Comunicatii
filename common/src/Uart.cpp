@@ -53,5 +53,9 @@ void Uart::writeString(const char* msg) {
 }
 
 void Uart::writeIntegerNumber(const int &number, const int &base) {
+
+    char buffer[20];
+    itoa(number, buffer, base);
+    writeString(buffer);
     
 }
