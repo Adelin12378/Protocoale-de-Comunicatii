@@ -4,6 +4,8 @@
 #include "Arduino.h"
 #include "avr8-stub.h"
 #include "app_api.h" // only needed with flash breakpoints
+#include "AdxlTransportI2c.h"
+
 
 // TODO: 1. based on IAdxlTransport interface implement two other classes
 // - one I2cTransport for I2C protocol
@@ -23,11 +25,12 @@
 // instantiation example: 
 // Adxl adxl(new SpiTransport);
 
+AdxlTransportI2c* i2c = new IAdxlTransport();
+
 void setup() {
     // initialize GDB stub
     debug_init();
 }
 
 void loop() {
-    
 }

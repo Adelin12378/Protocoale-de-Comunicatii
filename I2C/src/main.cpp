@@ -38,24 +38,50 @@ void setup() {
     wire.writeAddrRead(0x53);
     char id;
     wire.readByte(id);
-    uart.writeIntegerNumber(id, 16);
     wire.sendStop();
+    uart.writeIntegerNumber(id, 16);
     
     // expected response 0xE5
-
+    
     delay(500);
     
     // TODO: 3. enable ADXL read
-
+    wire.sendStart();
+    wire.writeAddrWrite(0x53);
+    wire.writeByte(0x2D);
+    wire.writeByte(1 << 3);
+    wire.sendStop();
+    
     delay(500);
 }
 
 void ADXL_readData() {
     // TODO: 3. read X, Y, Z from ADXL and send to PC
+    char d[6];
+    int X, Y, Z;
+    wire.sendStart();
+    wire.writeAddrWrite(0x53);
+    wire.writeByte(0x32);
+    wire.sendStart();
+    wire.writeAddrRead(0x53);
+    for (int i = 0; i < 6; i = i + 2){
+        wire.readByte(d[i + 1]);
+        wire.readByte(d[i]);
+    }
+
+    wire.sendStop();
+    
+    X = *(int*)& d[0];
+    Y = *(int*)& d[2];
+    Z = *(int*)& d[4];
+
+    uart.writeIntegerNumber(X, 10);
+    uart.writeIntegerNumber(Y, 10);
+    uart.writeIntegerNumber(Z, 10);
+    
 }
 
 void loop() {
     ADXL_readData();
-    wire.sendStart();
     delay(500);
 }

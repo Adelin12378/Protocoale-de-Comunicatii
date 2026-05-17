@@ -55,7 +55,7 @@ void setup() {
     // expected response 0xE5
 
     ADXL_enable();
-    spi.transmit(0x80);
+    spi.transmit(0x80); 
     char id = spi.transmit(0x00);
     ADXL_disable();
     
@@ -77,14 +77,17 @@ void ADXL_readData() {
     int X, Y, Z;
     ADXL_enable();
     spi.transmit(0xF2);
-    data[1] = spi.transmit(0x00);
-    data[0] = spi.transmit(0x00);
-    data[3] = spi.transmit(0x00);
-    data[2] = spi.transmit(0x00);
-    data[5] = spi.transmit(0x00);
-    data[4] = spi.transmit(0x00);
+    for (int i = 0; i < 6; i = i + 2){
+        data[i + 1] = spi.transmit(0x00);
+        data[i] = spi.transmit(0x00);
+    }
+    X = *(int*)& data[0];
+    Y = *(int*)& data[2];
+    Z = *(int*)& data[4];
     ADXL_disable();
-    uart.writeIntegerNumber(data[1], 16); 
+    uart.writeIntegerNumber(X, 16); 
+    uart.writeIntegerNumber(Y, 16); 
+    uart.writeIntegerNumber(Z, 16); 
 }
 
 void loop() {
