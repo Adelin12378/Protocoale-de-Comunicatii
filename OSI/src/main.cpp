@@ -5,6 +5,9 @@
 #include "avr8-stub.h"
 #include "app_api.h" // only needed with flash breakpoints
 #include "AdxlTransportI2c.h"
+#include "AdxlTransportSpi.h"
+#include "Adxl.h"
+#include "Uart.h"
 
 
 // TODO: 1. based on IAdxlTransport interface implement two other classes
@@ -25,12 +28,34 @@
 // instantiation example: 
 // Adxl adxl(new SpiTransport);
 
-AdxlTransportI2c* i2c = new IAdxlTransport();
+Adxl adxl(new AdxlTransportI2c{});
+Uart uart;
 
 void setup() {
-    // initialize GDB stub
-    debug_init();
+    uart.init(); // initializează UART
+    adxl.init(); // initializează transportul
+    // ==================================================
+    // verifică dacă senzorul răspunde
+    // ==================================================
+    if (adxl.isConnected()){
+        uart.writeString("Is connectede!\n");
+        adxl.start(); // pornește măsurarea
+    }
+    else
+        uart.writeString("Not connected!\n");
 }
 
 void loop() {
+    int x, y, z;
+    // citește accelerațiile
+    adxl.dataReader(x, y, z);
+    // trimite valorile către PC
+    uart.writeIntegerNumber(x, 10);
+    uart.writeIntegerNumber(y, 10);
+    uart.writeIntegerNumber(z, 10);
+    uart.writeString("\n");
+
+    delay(500);
+
+
 }
